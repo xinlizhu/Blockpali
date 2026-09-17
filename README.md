@@ -1,3 +1,4 @@
 # Blockpali
-Official implementation of blockpali
-code will be released soon
+Official implementation of blockpali.
+
+Code will be released soon.
