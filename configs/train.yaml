@@ -1,0 +1,42 @@
+model:
+  base_model: Qwen/Qwen2.5-VL-3B-Instruct
+  embedding_dim: 128
+  attn_implementation: sdpa
+  dtype: bfloat16
+processor:
+  max_blocks_per_doc: 16
+  block_min_pixels: 784
+  block_max_pixels: 589824
+  min_pixels: 3136
+  max_pixels: 602112
+data:
+  query_meta: data/train/query_meta.json
+  qrel_meta: data/train/qrel_meta.json
+  block_meta: data/train/block_meta.json
+  image_root: data/train
+loss:
+  temperature: 0.02
+  block_temperature: 0.1
+  block_aggregation: soft_or
+training:
+  output_dir: outputs/adapter
+  num_train_epochs: 2
+  per_device_train_batch_size: 16
+  gradient_accumulation_steps: 1
+  learning_rate: 0.0002
+  warmup_ratio: 0.0
+  lr_scheduler_type: linear
+  gradient_checkpointing: true
+  gradient_checkpointing_kwargs:
+    use_reentrant: false
+  dataloader_num_workers: 4
+  dataloader_drop_last: true
+  save_steps: 200
+  save_total_limit: 2
+  logging_steps: 10
+  seed: 42
+lora:
+  r: 32
+  lora_alpha: 32
+  lora_dropout: 0.1
+  target_modules: '(language_model\.layers\.\d+\.(self_attn\.(q_proj|k_proj|v_proj|o_proj)|mlp\.(gate_proj|up_proj|down_proj))|custom_text_proj)'
